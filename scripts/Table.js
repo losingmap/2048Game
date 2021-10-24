@@ -40,6 +40,7 @@ class Table {
      * 初始化游戏数据
      */
     initial() {
+        this.score = 0
         this.load()
 
         if (!this.history || this.history.length <= 0) {
