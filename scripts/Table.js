@@ -87,12 +87,14 @@ class Table {
 
         for (let i = 0; i < values.length; i++) {
             let cell = this.cells[i];
+            cell.value = values[i]
+            cell.left = 0
+            cell.top = 0
+            cell.combined = false
             if (values[i] > 0) {
-                cell.value = values[i]
-                cell.left = 0
-                cell.top = 0
-                cell.combined = false
                 this.randomCellList.remove(cell)
+            }else{
+                this.randomCellList.put(cell)
             }
         }
     }
