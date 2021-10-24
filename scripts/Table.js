@@ -43,8 +43,11 @@ class Table {
      * 初始化游戏数据
      */
     initial() {
-        this.generate()
-        this.generate()
+        // this.generate()
+        // this.generate()
+        this.cells[1].value = 2
+        this.cells[1 + 4].value = 4
+        this.cells[1 + 12].value = 2
         this.refresh()
         this.save(false)
     }
@@ -68,6 +71,7 @@ class Table {
             cell.value = values[i]
             cell.left = 0
             cell.top = 0
+            cell.combined = false
         }
     }
 
@@ -124,10 +128,11 @@ class Table {
     moveCell(cell, i, sample) {
         let randomCellList = this.randomCellList
         let cells = this.cells;
+        let toCell = cells[i];
 
         if (sample) {
             let value = cell.value
-            cells[i].value = value
+            toCell.value = value
             cell.value = 0
             this.moveQueue.push({
                 cell, value, i
@@ -135,7 +140,7 @@ class Table {
             return
         }
 
-        cells[i].value = cell.value
+        toCell.value = cell.value
         cell.value = 0
         cell.left = 0
         cell.top = 0
@@ -175,15 +180,62 @@ class Table {
     moveAndCombine(dir, sample) {
         sample && this.save(false)
         this[`move${dir}`](sample)
-        this[`combine${dir}`](sample)
+        // this[`combine${dir}`](sample)
         sample && this.rollback()
+    }
+
+    canMove(cell, toCell) {
+        let moveable =
+            !toCell.available ||
+            toCell.available && !toCell.combined && toCell.value === cell.value
+        return moveable && !this.haveObstacle(cell, toCell)
+    }
+
+    haveObstacle(cell, toCell) {
+        let dir = this.moveDir(cell, toCell)
+        if (dir.horizontal) {
+            let sign = dir.dir
+            let start = toCell.index - sign
+            let distance = dir.distance - 1
+            for (let i = 0; Math.abs(i) < distance; i += sign) {
+                if (this.cells[start + i].available)
+                    return true
+            }
+        } else if (dir.vertical) {
+            let sign = dir.dir
+            let start = cell.index + sign * this.size
+            let distance = dir.distance - 1
+            for (let i = 0; Math.abs(i) < distance; i += sign) {
+                if (this.cells[start + i * this.size].available)
+                    return true
+            }
+        }
+
+        return false
+
+    }
+
+    moveDir(cell, toCell) {
+        let x, y
+        x = toCell.x - cell.x
+        y = toCell.y - cell.y
+        return {
+            x, y, get horizontal() {
+                return Math.abs(this.x) > 0
+            }, get vertical() {
+                return Math.abs(this.y) > 0
+            }, get distance() {
+                return this.horizontal ? Math.abs(this.x) : Math.abs(this.y)
+            }, get dir() {
+                return this.horizontal ? Math.sign(this.x) : Math.sign(this.y)
+            }
+        }
     }
 
     /**
      * 向左移动
      */
     moveLeft(sample) {
-        let move = false
         let size = this.size
         let cells = this.cells
         cells.forEach(cell => {
@@ -193,22 +245,24 @@ class Table {
             let start = cell.y * size
             for (let x = 0; x < cell.x; x++) {
                 let i = start + x
-                if (cells[i].available)
+                let toCell = cells[i];
+                if (!this.canMove(cell, toCell))
                     continue
-                let
+                if (cell.value === toCell.value) {
+                    cell.value *= 2
+                    toCell.combined = true
+                }
                 this.moveCell(cell, i, sample)
-                move = true
+
                 break
             }
         })
-        return move
     }
 
     /**
      * 向右移动
      */
     moveRight(sample) {
-        let move = false
         let size = this.size
         let cells = this.cells
 
@@ -218,23 +272,25 @@ class Table {
                 continue
 
             let start = (cell.y + 1) * size - 1
-            for (let x = 0; x < size - cell.x; x++) {
+            for (let x = 0; x < size - cell.x - 1; x++) {
                 let i = start - x
-                if (cells[i].available)
+                let toCell = cells[i];
+                if (!this.canMove(cell, toCell))
                     continue
+                if (cell.value === toCell.value) {
+                    cell.value *= 2
+                    toCell.combined = true
+                }
                 this.moveCell(cell, i, sample)
-                move = true
                 break
             }
         }
-        return move
     }
 
     /**
      * 向上移动
      */
     moveUp(sample) {
-        let move = false
         let size = this.size
         let cells = this.cells
         cells.forEach(cell => {
@@ -244,127 +300,48 @@ class Table {
             let start = cell.x
             for (let y = 0; y < cell.y; y++) {
                 let i = start + y * size
-                if (cells[i].available)
+                let toCell = cells[i];
+                if (!this.canMove(cell, toCell))
                     continue
+                if (cell.value === toCell.value) {
+                    cell.value *= 2
+                    toCell.combined = true
+                }
                 this.moveCell(cell, i, sample)
-                move = true
                 break
             }
         })
-        return move
     }
 
     /**
      * 向下移动
      */
     moveDown(sample) {
-        let move = false
         let size = this.size
         let cells = this.cells
 
-        for (let i = cells.length - 1; i >= 0; i--) {
+        for (let i = cells.length - size - 1; i >= 0; i--) {
             let cell = cells[i]
             if (!cell.available)
                 continue
 
 
             let start = (size - 1) * size + cell.x
-            for (let y = 0; y < size - cell.y; y++) {
+            for (let y = 0; y < size - cell.y - 1; y++) {
                 let i = start - y * size
-                if (cells[i].available)
+                let toCell = cells[i];
+                if (!this.canMove(cell, toCell))
                     continue
+                if (cell.value === toCell.value) {
+                    cell.value *= 2
+                    toCell.combined = true
+                }
                 this.moveCell(cell, i, sample)
-                move = true
                 break
             }
         }
-        return move
     }
 
-    combineLeft(sample) {
-        let combine = false
-        let cells = this.cells
-        cells.forEach(cell => {
-            if (!cell.available)
-                return
-
-            let i = cell.index
-            if (i % this.size !== 0 && cells[i - 1].value === cells[i].value) {
-                cell.value *= 2
-                this.moveCell(cell, i - 1, sample)
-                combine = true
-            }
-        })
-        combine && this.moveLeft(sample)
-        return combine
-    }
-
-    combineRight(sample) {
-        let combine = false
-        let cells = this.cells
-
-        for (let index = cells.length - 1; index >= 0; index--) {
-            let cell = cells[index]
-
-            if (!cell.available)
-                continue
-
-            let i = cell.index
-            if (i % this.size !== 3 && cells[i + 1].value === cells[i].value) {
-                cell.value *= 2
-                this.moveCell(cell, i + 1, sample)
-                combine = true
-            }
-        }
-
-        combine && this.moveRight(sample)
-        return combine
-    }
-
-    combineUp(sample) {
-        let combine = false
-        let cells = this.cells
-        let size = this.size
-
-        for (let index = this.size; index < cells.length; index++) {
-            let cell = cells[index]
-            let i = cell.index
-            if (!cell.available)
-                continue
-
-            if (cells[i - size].value === cells[i].value) {
-                cell.value *= 2
-                this.moveCell(cell, i - size, sample)
-                combine = true
-            }
-
-        }
-
-        combine && this.moveUp(sample)
-        return combine
-    }
-
-    combineDown(sample) {
-        let combine = false
-        let cells = this.cells
-        let size = this.size
-
-        for (let index = cells.length - size - 1; index >= 0; index--) {
-            let cell = cells[index]
-            if (!cell.available)
-                continue
-
-            let i = cell.index
-            if (cells[i + size].value === cells[i].value) {
-                cell.value *= 2
-                this.moveCell(cell, i + size, sample)
-                combine = true
-            }
-        }
-
-        combine && this.moveDown(sample)
-        return combine
-    }
 }
 
 export default Table

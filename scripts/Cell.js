@@ -12,6 +12,7 @@ class Cell {
         this.width = 100
         this.coordinate = {x,y}
         this.index = i
+        this.combined = false
     }
 
     get available(){
