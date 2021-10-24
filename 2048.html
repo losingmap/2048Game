@@ -17,14 +17,24 @@
             2048
             <div class="description">合并相同方块，得到2048的方块!</div>
         </div>
-        <div class="score">
-            <div class="score_box">
-                <div class="score_title">分数</div>
-                <div id="score-num" class="score_num" v-text="score.cur"></div>
+        <div class="right">
+            <div class="score">
+                <div class="score_box">
+                    <div class="score_title">分数</div>
+                    <div id="score-num" class="score_num" v-text="score.cur"></div>
+                </div>
+                <div class="score_box">
+                    <div class="best_score_title">最佳</div>
+                    <div id="best-score-num" class="score_num" v-text="score.best"></div>
+                </div>
             </div>
-            <div class="score_box">
-                <div class="best_score_title">最佳</div>
-                <div id="best-score-num" class="score_num" v-text="score.best"></div>
+            <div class="operation">
+                <div>
+                    <button @click="newGame()">重开</button>
+                </div>
+                <div>
+                    <button @click="rollback()">悔棋</button>
+                </div>
             </div>
         </div>
     </header>

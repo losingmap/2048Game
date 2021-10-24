@@ -6,12 +6,12 @@ class Cell {
      * @param {Number} i
      */
     constructor(x,y,i) {
+        this.coordinate = {x,y}
+        this.index = i
         this.top = 0
         this.left = 0
         this.value = 0
         this.width = 100
-        this.coordinate = {x,y}
-        this.index = i
         this.combined = false
     }
 
@@ -55,6 +55,13 @@ class Cell {
 
     randValue(){
         this.value = Math.random() < .5 ? 2 : 4
+    }
+    initial(){
+        this.top = 0
+        this.left = 0
+        this.value = 0
+        this.width = 100
+        this.combined = false
     }
 }
 

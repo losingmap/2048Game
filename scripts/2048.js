@@ -7,17 +7,15 @@ const g2048 = {
     data() {
         return {
             table: {},
-            score: {
-                cur: 0,
-                best: 0,
-            }
+            bestScore: 0
         }
     },
     methods: {
         init() {
-            this.table = new Table({animDuration: 200})
+            this.table = new Table({animDuration: 100})
             this.table.initial()
 
+            this.load()
             this.registerEvent()
         },
         registerEvent() {
@@ -31,14 +29,36 @@ const g2048 = {
                     this.table.refresh()
                     table.moveAndCombine(key, true)
                     table.allCellAnim()
-                    refresh = setTimeout(() =>{
+                    refresh = setTimeout(() => {
                         this.table.anim = false
                         this.table.refresh()
                     }, this.table.animDuration * 2)
                 })
             })
+        },
+        load(){
+            this.bestScore = localStorage.getItem("best")
+        },
+        newGame(){
+            this.table.newGame()
+        },
+        rollback(){
+            this.table.rollback()
         }
+    },
 
+    computed: {
+        score() {
+            let cur = this.table.score
+            let best = this.bestScore
+            if (cur > best) {
+                best = this.bestScore = cur
+                localStorage.setItem("best",best)
+            }
+            return {
+                cur, best,
+            }
+        }
     },
     mounted() {
         this.init()

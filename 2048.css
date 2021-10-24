@@ -11,13 +11,14 @@ body #g-2048 {
 body header {
   display: flex;
   justify-content: center;
-  height: 100px;
+  margin-bottom: 20px;
 }
 body header > div {
   flex-grow: 1;
 }
 body header .title {
-  font-size: 60px;
+  font-size: 80px;
+  font-weight: bold;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,14 +28,19 @@ body header .title {
 body header .title .description {
   font-size: 12px;
   text-align: center;
+  font-weight: normal;
 }
-body header .score {
+body header .right {
+  display: flex;
+  flex-direction: column;
+}
+body header .right .score {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
-body header .score .score_box {
+body header .right .score .score_box {
   width: 100px;
   margin: 20px;
   background: #bbada0;
@@ -43,9 +49,30 @@ body header .score .score_box {
   border-radius: 5px;
   color: #eee4da;
 }
-body header .score .score_box .score_num {
+body header .right .score .score_box .score_num {
   color: white;
   font-size: 1.5em;
+}
+body header .right .operation {
+  display: flex;
+  justify-content: center;
+}
+body header .right .operation div {
+  margin-right: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+body header .right .operation div button {
+  font-size: 1.2em;
+  background: #8f7a66;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+body header .right .operation div button:hover {
+  background: rgba(143, 122, 102, 0.87);
 }
 body .table {
   width: 390px;

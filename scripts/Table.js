@@ -1,8 +1,6 @@
 import Cell from './Cell.js'
 import ShuffleArray from './ShuffleArray.js'
 
-let {reactive} = Vue
-
 class Table {
     /**
      *
@@ -10,6 +8,7 @@ class Table {
      * @param {Number} width 棋盘宽度
      */
     constructor({size, width, animDuration, margin}) {
+        this.score = 0
         this.margin = margin ? margin : 10
         this.animDuration = animDuration ? animDuration : 200
         this.size = size ? size : 4
@@ -21,7 +20,6 @@ class Table {
         this.moveQueue = []
         this.history = []
         this.anim = false
-        let moveAllFlag
         this.init()
     }
 
@@ -35,7 +33,6 @@ class Table {
             let cell = new Cell(x, y, i)
             this.cells.push(cell)
         }
-
         this.randomCellList.initial(this.cells)
     }
 
@@ -43,35 +40,60 @@ class Table {
      * 初始化游戏数据
      */
     initial() {
-        // this.generate()
-        // this.generate()
-        this.cells[1].value = 2
-        this.cells[1 + 4].value = 4
-        this.cells[1 + 12].value = 2
-        this.refresh()
-        this.save(false)
+        this.load()
+
+        if (!this.history || this.history.length <= 0) {
+            this.generate()
+            this.generate()
+            this.refresh()
+            this.save(true)
+        }
+    }
+
+    newGame() {
+        let cells = this.cells
+        for (const cell of cells) {
+            cell.initial()
+        }
+        localStorage.removeItem("history")
+        this.initial()
     }
 
     save(store) {
+        let history = this.history
         let values = this.cells.map(cell => cell.value)
-        this.history.push(JSON.stringify(values))
-        store && localStorage.setItem("history", this.history)
+        let score = this.score
+        history.push(JSON.stringify({values, score}))
+        store && localStorage.setItem("history", JSON.stringify(history))
     }
 
     load() {
         let history = localStorage.getItem("history")
-        this.history = JSON.parse(history)
+        history = this.history = JSON.parse(history)
+        if (!history) {
+            this.history = history = []
+            return
+        }
+        history.push(history[history.length - 1])
+        this.rollback()
     }
 
     rollback() {
+        if (this.history.length < 2)
+            return
         this.history.pop()
-        let values = JSON.parse(this.history[this.history.length - 1])
+        let {values, score} = JSON.parse(this.history[this.history.length - 1])
+        this.score = score
+
         for (let i = 0; i < values.length; i++) {
             let cell = this.cells[i];
-            cell.value = values[i]
-            cell.left = 0
-            cell.top = 0
-            cell.combined = false
+            if (values[i] > 0) {
+                cell.value = values[i]
+                cell.left = 0
+                cell.top = 0
+                cell.combined = false
+                this.randomCellList.remove(cell)
+            }
         }
     }
 
@@ -104,7 +126,7 @@ class Table {
      * 移动采样队列中所有的Cell
      */
     moveAll() {
-        let gen = this.moveQueue.length > 0
+        let moved = this.moveQueue.length > 0
         let cells = this.cells
 
         let item
@@ -114,9 +136,11 @@ class Table {
             this.moveCell(cell, i, false)
         }
 
-        gen && this.generate()
+        if (moved) {
+            this.generate()
+            this.save(true)
+        }
 
-        this.save(true)
     }
 
     /**
@@ -180,8 +204,9 @@ class Table {
     moveAndCombine(dir, sample) {
         sample && this.save(false)
         this[`move${dir}`](sample)
-        // this[`combine${dir}`](sample)
+        let score = this.score
         sample && this.rollback()
+        this.score = score
     }
 
     canMove(cell, toCell) {
@@ -195,7 +220,7 @@ class Table {
         let dir = this.moveDir(cell, toCell)
         if (dir.horizontal) {
             let sign = dir.dir
-            let start = toCell.index - sign
+            let start = cell.index + sign
             let distance = dir.distance - 1
             for (let i = 0; Math.abs(i) < distance; i += sign) {
                 if (this.cells[start + i].available)
@@ -232,6 +257,14 @@ class Table {
         }
     }
 
+    increaseCell(cell, toCell) {
+        if (cell.value === toCell.value) {
+            this.score += cell.value
+            cell.value *= 2
+            toCell.combined = true
+        }
+    }
+
     /**
      * 向左移动
      */
@@ -248,10 +281,7 @@ class Table {
                 let toCell = cells[i];
                 if (!this.canMove(cell, toCell))
                     continue
-                if (cell.value === toCell.value) {
-                    cell.value *= 2
-                    toCell.combined = true
-                }
+                this.increaseCell(cell, toCell)
                 this.moveCell(cell, i, sample)
 
                 break
@@ -277,10 +307,7 @@ class Table {
                 let toCell = cells[i];
                 if (!this.canMove(cell, toCell))
                     continue
-                if (cell.value === toCell.value) {
-                    cell.value *= 2
-                    toCell.combined = true
-                }
+                this.increaseCell(cell, toCell)
                 this.moveCell(cell, i, sample)
                 break
             }
@@ -303,10 +330,7 @@ class Table {
                 let toCell = cells[i];
                 if (!this.canMove(cell, toCell))
                     continue
-                if (cell.value === toCell.value) {
-                    cell.value *= 2
-                    toCell.combined = true
-                }
+                this.increaseCell(cell, toCell)
                 this.moveCell(cell, i, sample)
                 break
             }
@@ -332,10 +356,7 @@ class Table {
                 let toCell = cells[i];
                 if (!this.canMove(cell, toCell))
                     continue
-                if (cell.value === toCell.value) {
-                    cell.value *= 2
-                    toCell.combined = true
-                }
+                this.increaseCell(cell, toCell)
                 this.moveCell(cell, i, sample)
                 break
             }
