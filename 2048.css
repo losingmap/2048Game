@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+body #g-2048 {
+  max-width: 800px;
+  flex-grow: 1;
+}
+body header {
+  display: flex;
+  justify-content: center;
+  height: 100px;
+}
+body header > div {
+  flex-grow: 1;
+}
+body header .title {
+  font-size: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  color: #776e65;
+}
+body header .title .description {
+  font-size: 12px;
+  text-align: center;
+}
+body header .score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+body header .score .score_box {
+  width: 100px;
+  margin: 20px;
+  background: #bbada0;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #eee4da;
+}
+body header .score .score_box .score_num {
+  color: white;
+  font-size: 1.5em;
+}
+body .table {
+  width: 390px;
+  height: 390px;
+  background: #bbada0;
+  position: relative;
+  margin: auto;
+  padding: 10px;
+}
+body .table .slot {
+  width: 90px;
+  height: 90px;
+  background: rgba(238, 228, 218, 0.35);
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  float: left;
+}
+body .table .slot:nth-child(4n) {
+  margin-right: 0;
+}
+body .table .slot .item {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+}
+/*# sourceMappingURL=2048.css.map */

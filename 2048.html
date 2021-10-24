@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>2048</title>
+    <link rel="stylesheet" href="2048.css">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="./scripts/2048.js" type="module"></script>
+</head>
+
+<body>
+<div id="g-2048">
+    <header>
+        <div class="title">
+            2048
+            <div class="description">合并相同方块，得到2048的方块!</div>
+        </div>
+        <div class="score">
+            <div class="score_box">
+                <div class="score_title">分数</div>
+                <div id="score-num" class="score_num" v-text="score.cur"></div>
+            </div>
+            <div class="score_box">
+                <div class="best_score_title">最佳</div>
+                <div id="best-score-num" class="score_num" v-text="score.best"></div>
+            </div>
+        </div>
+    </header>
+    <div class="table" :style="`width:${table.width}px;height:${table.width}px;font-size:${table.fontSize}px;`">
+        <div class="slot" v-for="(cell,i) in table.cells"
+             :style="`width:${table.cellSize}px;height:${table.cellSize}px;margin-right:${table.tableMargin(i)}px`">
+            <div class="item" v-show="cell.available"
+                 :style="`
+                 background-color:${cell.backGroundColor};color:${cell.color};
+                 left:${cell.left}px;top:${cell.top}px;
+                 width:${cell.width}%;height:${cell.width}%;
+                 transition:${table.anim ? table.animDuration : 0}ms ease-in-out;
+                 `"
+                 v-text="cell.value"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>
