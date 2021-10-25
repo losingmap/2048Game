@@ -12,8 +12,9 @@ class Table {
         this.score = 0
         this.margin = margin ? margin : 10
         this.animDuration = animDuration ? animDuration : 200
-        this.size = size ? size : 4
         this.width = width ? width : 400
+        this.size = size ? size : 4
+        this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
         this.cells = []
         this.randomCellList = new ShuffleArray(10)
         this.moveQueue = []
@@ -29,17 +30,17 @@ class Table {
     set width(value) {
         this._width = value ? value : 400
         this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
-        this.fontSize = this.cellSize * .6
     }
 
     /**
      * 初始化棋盘数据
      */
     init() {
+        this.cells.length = 0
         for (let i = 0; i < this.size * this.size; i++) {
             let x = i % this.size
             let y = Math.floor(i / this.size)
-            let cell = new Cell(x, y, i)
+            let cell = new Cell(x, y, i, this)
             this.cells.push(cell)
         }
     }
@@ -73,7 +74,8 @@ class Table {
         let history = this.history
         let values = this.cells.map(cell => cell.value)
         let score = this.score
-        history.push(JSON.stringify({values, score}))
+        let size = this.size
+        history.push(JSON.stringify({values, score, size}))
         store && localStorage.setItem("history", JSON.stringify(history))
     }
 
@@ -92,10 +94,12 @@ class Table {
         if (this.history.length < 2)
             return
         this.history.pop()
-        let {values, score} = JSON.parse(this.history[this.history.length - 1])
+        let {values, score, size} = JSON.parse(this.history[this.history.length - 1])
         this.score = score
+        if (values.length !== this.size * this.size)
+            this.resize(size)
 
-        for (let i = 0; i < values.length; i++) {
+        for (let i = 0; i < this.cells.length; i++) {
             let cell = this.cells[i];
             cell.value = values[i]
             cell.left = 0
@@ -109,6 +113,14 @@ class Table {
         }
     }
 
+    resize(size) {
+        if (this.size === size)
+            return
+        this.size = size
+        this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
+        this.init()
+        this.newGame()
+    }
 
     refresh() {
         this.moveAll()

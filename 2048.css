@@ -13,7 +13,6 @@ body #g-2048 {
 body header {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
 }
 body header > div {
   flex-grow: 1;
@@ -48,10 +47,8 @@ body header .right .score {
 }
 body header .right .score .score_box {
   width: 100px;
-  margin: 20px;
   background: #bbada0;
   box-sizing: border-box;
-  padding: 10px 20px;
   border-radius: 5px;
   color: #eee4da;
 }
@@ -62,6 +59,7 @@ body header .right .score .score_box .score_num {
 body header .right .operation {
   display: flex;
   justify-content: center;
+  margin-bottom: 10px;
 }
 body header .right .operation div {
   margin-right: 20px;

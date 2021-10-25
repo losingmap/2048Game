@@ -12,10 +12,10 @@ const g2048 = {
     },
     methods: {
         init() {
+            this.initial()
             this.table = new Table({animDuration: 100})
             this.table.initial()
 
-            this.initial()
             this.registerEvent()
         },
         registerEvent() {
@@ -40,16 +40,15 @@ const g2048 = {
             })
         },
         initial(){
-            let width = document.body.clientWidth
-            this.resize(width)
+            let width = () => document.body.clientWidth
+            this.changeWidth(width())
             window.onresize =  () => {
-                let width = document.body.clientWidth
-                this.resize(width)
+                this.changeWidth(width())
             };
 
             this.bestScore = localStorage.getItem("best")
         },
-        resize(width){
+        changeWidth(width){
             if(width < 768){
                 this.table.width = width * .8
             }
@@ -62,6 +61,14 @@ const g2048 = {
         },
         eliminate(){
             this.table.eliminate()
+        },
+        resize(offset){
+            let size = this.table.size
+            size += offset
+            if(size > 1 && size < 8){
+                this.table.resize(size)
+            }
+
         }
     },
 

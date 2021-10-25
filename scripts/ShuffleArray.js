@@ -13,6 +13,7 @@ class ShuffleArray extends Array {
      * @param {Array} arr
      */
     initial(arr) {
+        this.length = 0
         this.push(...arr)
         this.index = arr.length - 1
         this.shuffle()
