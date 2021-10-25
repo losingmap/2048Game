@@ -15,7 +15,7 @@ const g2048 = {
             this.table = new Table({animDuration: 100})
             this.table.initial()
 
-            this.load()
+            this.initial()
             this.registerEvent()
         },
         registerEvent() {
@@ -23,7 +23,7 @@ const g2048 = {
             let keys = ["Left", "Right", "Up", "Down"]
             let refresh
             keys.forEach(key => {
-                EventTrigger.Keys(key).keydownAny(() => {
+                let swapCallback = () => {
                     this.table.anim = false
                     refresh && clearTimeout(refresh)
                     this.table.refresh()
@@ -33,11 +33,26 @@ const g2048 = {
                         this.table.anim = false
                         this.table.refresh()
                     }, this.table.animDuration * 2)
-                })
+                }
+                EventTrigger.Keys(key).keydownAny(swapCallback)
+                EventTrigger.swaps(key).swapAny(swapCallback)
+
             })
         },
-        load(){
+        initial(){
+            let width = document.body.clientWidth
+            this.resize(width)
+            window.onresize =  () => {
+                let width = document.body.clientWidth
+                this.resize(width)
+            };
+
             this.bestScore = localStorage.getItem("best")
+        },
+        resize(width){
+            if(width < 768){
+                this.table.width = width * .8
+            }
         },
         newGame(){
             this.table.newGame()

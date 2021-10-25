@@ -1,3 +1,5 @@
+@import "2048-PE.css";
+@import "2048-PC.css";
 body {
   margin: 0;
   padding: 0;
@@ -17,7 +19,6 @@ body header > div {
   flex-grow: 1;
 }
 body header .title {
-  font-size: 80px;
   font-weight: bold;
   display: flex;
   flex-direction: column;
@@ -26,7 +27,6 @@ body header .title {
   color: #776e65;
 }
 body header .title .description {
-  font-size: 12px;
   text-align: center;
   font-weight: normal;
 }

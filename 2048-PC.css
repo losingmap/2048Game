@@ -1,0 +1,9 @@
+@media only screen and (min-width: 576px) {
+  body header .title {
+    font-size: 80px;
+  }
+  body header .title .description {
+    font-size: 12px;
+  }
+}
+/*# sourceMappingURL=2048-PC.css.map */

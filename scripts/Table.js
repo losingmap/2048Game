@@ -8,19 +8,28 @@ class Table {
      * @param {Number} width 棋盘宽度
      */
     constructor({size, width, animDuration, margin}) {
+        this._width = 0
         this.score = 0
         this.margin = margin ? margin : 10
         this.animDuration = animDuration ? animDuration : 200
         this.size = size ? size : 4
         this.width = width ? width : 400
-        this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
-        this.fontSize = this.cellSize * .6
         this.cells = []
         this.randomCellList = new ShuffleArray(10)
         this.moveQueue = []
         this.history = []
         this.anim = false
         this.init()
+    }
+
+    get width(){
+        return this._width
+    }
+
+    set width(value){
+        this._width = value ? value : 400
+        this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
+        this.fontSize = this.cellSize * .6
     }
 
     /**
@@ -33,13 +42,13 @@ class Table {
             let cell = new Cell(x, y, i)
             this.cells.push(cell)
         }
-        this.randomCellList.initial(this.cells)
     }
 
     /**
      * 初始化游戏数据
      */
     initial() {
+        this.randomCellList.initial(this.cells)
         this.score = 0
         this.load()
 

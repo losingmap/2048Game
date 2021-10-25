@@ -1,0 +1,41 @@
+@media only screen and (max-width: 576px) {
+  body header {
+    flex-direction: column;
+  }
+  body header .title {
+    font-size: 60px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    color: #776e65;
+  }
+  body header .title .description {
+    font-size: 12px;
+    text-align: center;
+    font-weight: normal;
+  }
+  body header .right .score .score_box {
+    width: 80px;
+    margin: 10px 20px;
+  }
+  body header .operation div {
+    margin-right: 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  body header .operation div button {
+    font-size: 1.2em;
+    background: #8f7a66;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+  body header .operation div button:hover {
+    background: rgba(143, 122, 102, 0.87);
+  }
+}
+/*# sourceMappingURL=2048-PE.css.map */
