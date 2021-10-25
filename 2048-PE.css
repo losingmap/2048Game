@@ -16,6 +16,9 @@
     text-align: center;
     font-weight: normal;
   }
+  body header .title .description div.pe_tips {
+    display: block;
+  }
   body header .right .score .score_box {
     width: 80px;
     margin: 10px 20px;

@@ -5,5 +5,8 @@
   body header .title .description {
     font-size: 12px;
   }
+  body header .title .description div.pc_tips {
+    display: block;
+  }
 }
 /*# sourceMappingURL=2048-PC.css.map */

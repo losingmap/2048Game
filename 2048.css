@@ -30,6 +30,12 @@ body header .title .description {
   text-align: center;
   font-weight: normal;
 }
+body header .title .description .pc_tips {
+  display: none;
+}
+body header .title .description .pe_tips {
+  display: none;
+}
 body header .right {
   display: flex;
   flex-direction: column;
