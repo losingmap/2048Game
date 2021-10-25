@@ -16,7 +16,7 @@ const g2048 = {
          */
         init() {
             this.initial()
-            let size = localStorage.getItem("size")
+            let size = Number(localStorage.getItem("size"))
             this.table = new Table({size, animDuration: 200})
             this.table.initial()
 
@@ -92,6 +92,7 @@ const g2048 = {
         resize(offset) {
             let size = this.table.size
             size += offset
+            console.log(size)
             if (size > 1 && size < 8) {
                 this.table.resize(size)
                 localStorage.setItem("size", size)
