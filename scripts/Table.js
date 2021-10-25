@@ -93,6 +93,8 @@ class Table {
         let values = this.cells.map(cell => cell.value)
         let score = this.score
         history.push(JSON.stringify({values, score}))
+        if (history.length > 10)
+            history.shift()
         store && localStorage.setItem("history", JSON.stringify(history))
     }
 
