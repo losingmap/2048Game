@@ -83,6 +83,11 @@ class ShuffleArray extends Array {
         return this
     }
 
+    /**
+     * 交换两个位置的值
+     * @param i
+     * @param j
+     */
     swap(i, j) {
         let temp = this[i]
         this[i] = this[j]

@@ -1,6 +1,9 @@
 import Cell from './Cell.js'
 import ShuffleArray from './ShuffleArray.js'
 
+/**
+ * 2048桌面
+ */
 class Table {
     /**
      *
@@ -23,10 +26,18 @@ class Table {
         this.init()
     }
 
+    /**
+     * 获取桌面宽度
+     * @returns {number} 桌面宽度
+     */
     get width() {
         return this._width
     }
 
+    /**
+     * 设置左面宽度
+     * @param {Number} value
+     */
     set width(value) {
         this._width = value ? value : 400
         this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
@@ -61,6 +72,9 @@ class Table {
         }
     }
 
+    /**
+     * 开始新游戏
+     */
     newGame() {
         let cells = this.cells
         for (const cell of cells) {
@@ -70,6 +84,10 @@ class Table {
         this.initial()
     }
 
+    /**
+     * 保存游戏
+     * @param store
+     */
     save(store) {
         let history = this.history
         let values = this.cells.map(cell => cell.value)
@@ -79,6 +97,9 @@ class Table {
         store && localStorage.setItem("history", JSON.stringify(history))
     }
 
+    /**
+     * 加载游戏
+     */
     load() {
         let history = localStorage.getItem("history")
         history = this.history = JSON.parse(history)
@@ -90,6 +111,9 @@ class Table {
         this.rollback()
     }
 
+    /**
+     * 回退记录(悔棋功能)
+     */
     rollback() {
         if (this.history.length < 2)
             return
@@ -113,6 +137,10 @@ class Table {
         }
     }
 
+    /**
+     * 重设桌面大小
+     * @param {Number} size 每一行能放多少个Cell
+     */
     resize(size) {
         if (this.size === size)
             return
@@ -122,6 +150,9 @@ class Table {
         this.newGame()
     }
 
+    /**
+     * 刷新桌面
+     */
     refresh() {
         this.moveAll()
     }
@@ -196,6 +227,9 @@ class Table {
         randomCellList.remove(cells[i]).put(cell)
     }
 
+    /**
+     * 播放所有Cell的移动动画
+     */
     allCellAnim() {
         this.anim = true
         let cells = this.cells
@@ -225,6 +259,11 @@ class Table {
         }
     }
 
+    /**
+     * 移动并合并相同值的Cell
+     * @param {String} dir 移动方向
+     * @param {Boolean} sample 是否为采样移动
+     */
     moveAndCombine(dir, sample) {
         sample && this.save(false)
         this[`move${dir}`](sample)
@@ -233,6 +272,12 @@ class Table {
         this.score = score
     }
 
+    /**
+     * 判断是否可以移动到指定方块处
+     * @param {Cell} cell 开始Cell
+     * @param {Cell} toCell 抵达Cell
+     * @returns {Boolean} 是否可以移动过去
+     */
     canMove(cell, toCell) {
         let moveable =
             !toCell.available ||
@@ -240,6 +285,12 @@ class Table {
         return moveable && !this.haveObstacle(cell, toCell)
     }
 
+    /**
+     * 判断两个Cell之间是否有障碍Cell
+     * @param {Cell} cell 开始的Cell
+     * @param {Cell} toCell 结束的Cell
+     * @returns {Boolean} 是否有障碍物
+     */
     haveObstacle(cell, toCell) {
         let dir = this.moveDir(cell, toCell)
         if (dir.horizontal) {
@@ -264,6 +315,12 @@ class Table {
 
     }
 
+    /**
+     * 获取移动方向信息
+     * @param cell
+     * @param toCell
+     * @returns {boolean|{readonly horizontal: boolean, readonly distance: number, x: number, y: number, readonly vertical: boolean, readonly dir: number}|number}
+     */
     moveDir(cell, toCell) {
         let x, y
         x = toCell.x - cell.x
@@ -281,6 +338,11 @@ class Table {
         }
     }
 
+    /**
+     * 移动Cell并扩大Cell的值
+     * @param {Cell} cell
+     * @param {Cell} toCell
+     */
     increaseCell(cell, toCell) {
         if (cell.value === toCell.value) {
             this.score += cell.value
@@ -387,6 +449,9 @@ class Table {
         }
     }
 
+    /**
+     * 消除基本块(2和4)
+     */
     eliminate() {
         this.cells.forEach(cell => {
             if (cell.value === 2 || cell.value === 4) {

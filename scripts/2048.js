@@ -11,6 +11,9 @@ const g2048 = {
         }
     },
     methods: {
+        /**
+         * 进入2048
+         */
         init() {
             this.initial()
             this.table = new Table({animDuration: 100})
@@ -18,6 +21,9 @@ const g2048 = {
 
             this.registerEvent()
         },
+        /**
+         * 注册事件
+         */
         registerEvent() {
             let table = this.table
             let keys = ["Left", "Right", "Up", "Down"]
@@ -39,33 +45,53 @@ const g2048 = {
 
             })
         },
-        initial(){
+        /**
+         * 初始化2048
+         */
+        initial() {
             let width = () => document.body.clientWidth
             this.changeWidth(width())
-            window.onresize =  () => {
+            window.onresize = () => {
                 this.changeWidth(width())
             };
 
             this.bestScore = localStorage.getItem("best")
         },
-        changeWidth(width){
-            if(width < 768){
+        /**
+         * 改变棋盘尺寸
+         * @param {Number} width 棋盘尺寸
+         */
+        changeWidth(width) {
+            if (width < 768) {
                 this.table.width = width * .8
             }
         },
-        newGame(){
+        /**
+         * 开始新游戏
+         */
+        newGame() {
             this.table.newGame()
         },
-        rollback(){
+        /**
+         * 撤销当前操作
+         */
+        rollback() {
             this.table.rollback()
         },
-        eliminate(){
+        /**
+         * 消除基本块(2和4)
+         */
+        eliminate() {
             this.table.eliminate()
         },
-        resize(offset){
+        /**
+         * 重设棋盘大小
+         * @param offset
+         */
+        resize(offset) {
             let size = this.table.size
             size += offset
-            if(size > 1 && size < 8){
+            if (size > 1 && size < 8) {
                 this.table.resize(size)
             }
 
@@ -73,12 +99,16 @@ const g2048 = {
     },
 
     computed: {
+        /**
+         * 返回分数信息 包含当前分数和最佳分数
+         * @returns {{cur:Number,best:Number}}
+         */
         score() {
             let cur = this.table.score
             let best = this.bestScore
             if (cur > best) {
                 best = this.bestScore = cur
-                localStorage.setItem("best",best)
+                localStorage.setItem("best", best)
             }
             return {
                 cur, best,
