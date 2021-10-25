@@ -78,7 +78,7 @@ class Table {
     newGame() {
         let cells = this.cells
         for (const cell of cells) {
-            cell.initial()
+            cell.reset()
         }
         localStorage.removeItem("history")
         this.initial()
