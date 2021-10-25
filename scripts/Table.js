@@ -92,8 +92,7 @@ class Table {
         let history = this.history
         let values = this.cells.map(cell => cell.value)
         let score = this.score
-        let size = this.size
-        history.push(JSON.stringify({values, score, size}))
+        history.push(JSON.stringify({values, score}))
         store && localStorage.setItem("history", JSON.stringify(history))
     }
 
@@ -118,10 +117,8 @@ class Table {
         if (this.history.length < 2)
             return
         this.history.pop()
-        let {values, score, size} = JSON.parse(this.history[this.history.length - 1])
+        let {values, score} = JSON.parse(this.history[this.history.length - 1])
         this.score = score
-        if (values.length !== this.size * this.size)
-            this.resize(size)
 
         for (let i = 0; i < this.cells.length; i++) {
             let cell = this.cells[i];
@@ -141,7 +138,8 @@ class Table {
      * 重设桌面大小
      * @param {Number} size 每一行能放多少个Cell
      */
-    resize(size) {
+    resize(size, restart) {
+        let newGame = this.size
         if (this.size === size)
             return
         this.size = size
