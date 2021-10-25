@@ -51,7 +51,7 @@ const g2048 = {
          */
         initial() {
             let width = () => document.body.clientWidth
-            setTimeout(() => this.changeWidth(width()),10)
+            window.onload = () => this.changeWidth(width())
 
             window.onresize = () => {
                 this.changeWidth(width())
