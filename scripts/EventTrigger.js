@@ -11,6 +11,7 @@ class EventTrigger {
     static END_SWAP = "END"
     static swapCallback = []
     static swapInfo = {}
+    static sensitive = 50
 
     static Keys(...args) {
         return new EventTrigger(args)
@@ -61,18 +62,20 @@ class EventTrigger {
             swapInfo.status = EventTrigger.START_SWAP
             swapInfo.x = e.touches[0].clientX
             swapInfo.y = e.touches[0].clientY
-        })
+            return false
+        },{ passive: false })
         document.addEventListener("touchmove", e => {
             swapInfo.status = EventTrigger.ON_SWAP
             swapInfo.deltaX = e.touches[0].clientX - swapInfo.x
             swapInfo.deltaY = e.touches[0].clientY - swapInfo.y
-        })
+            return false
+        },{ passive: false })
         document.addEventListener("touchend", e => {
             swapInfo.status = EventTrigger.END_SWAP
             let absX = Math.abs(swapInfo.deltaX)
             let absY = Math.abs(swapInfo.deltaY)
-            let horizontal = swapInfo.deltaX !== 0 && absX > absY
-            let vertical = swapInfo.deltaY !== 0 && absY > absX
+            let horizontal = absX > EventTrigger.sensitive && absX > absY
+            let vertical = absY > EventTrigger.sensitive && absY > absX
             let left = swapInfo.deltaX < 0
             let up = swapInfo.deltaY < 0
             if (horizontal) {
@@ -92,7 +95,9 @@ class EventTrigger {
                     callback()
                 })
             }
-        })
+            swapInfo.x = swapInfo.y = swapInfo.deltaX = swapInfo.deltaY = 0
+            return false
+        },{ passive: false })
         swapCallback.ready = true
     }
 
