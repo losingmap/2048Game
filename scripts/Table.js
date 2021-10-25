@@ -22,11 +22,11 @@ class Table {
         this.init()
     }
 
-    get width(){
+    get width() {
         return this._width
     }
 
-    set width(value){
+    set width(value) {
         this._width = value ? value : 400
         this.cellSize = (this.width - 10 * (this.size - 1)) / this.size
         this.fontSize = this.cellSize * .6
@@ -103,7 +103,7 @@ class Table {
             cell.combined = false
             if (values[i] > 0) {
                 this.randomCellList.remove(cell)
-            }else{
+            } else {
                 this.randomCellList.put(cell)
             }
         }
@@ -375,8 +375,14 @@ class Table {
         }
     }
 
-    eliminate(){
-        this.cells.forEach(cell => cell.value = cell.value === 2 || cell.value === 4 ? 0 :  cell.value)
+    eliminate() {
+        this.cells.forEach(cell => {
+            if (cell.value === 2 || cell.value === 4) {
+                cell.value = 0
+                this.randomCellList.put(cell)
+            }
+        })
+        this.save(true)
     }
 
 }
