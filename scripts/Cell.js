@@ -14,7 +14,6 @@ class Cell {
         this.width = 100
         this.combined = false
     }
-
     get available(){
         return this.value > 0
     }

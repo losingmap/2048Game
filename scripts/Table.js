@@ -375,6 +375,10 @@ class Table {
         }
     }
 
+    eliminate(){
+        this.cells.forEach(cell => cell.value = cell.value === 2 || cell.value === 4 ? 0 :  cell.value)
+    }
+
 }
 
 export default Table

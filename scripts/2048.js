@@ -59,6 +59,9 @@ const g2048 = {
         },
         rollback(){
             this.table.rollback()
+        },
+        eliminate(){
+            this.table.eliminate()
         }
     },
 
